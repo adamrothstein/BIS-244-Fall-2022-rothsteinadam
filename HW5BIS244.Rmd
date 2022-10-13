@@ -1,0 +1,92 @@
+---
+title: "HW5BIS244"
+output:
+  html_document: default
+  pdf_document: default
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# api: Student performance in California schools
+
+The Academic Performance Index is computed for all California  schools based on standardised testing of students. The data sets  contain information for all schools with at least 100 students and  for various probability samples of the data. Please see the following website for the columns definitions:
+https://www.rdocumentation.org/packages/survey/versions/4.1-1/topics/api 
+
+## Details
+
+"apipop" is the entire population, 
+"apisrs" is a simple random sample, 
+"apiclus1" is a cluster sample of school districts, 
+"apistrat" is a sample stratified by stype, and 
+"apiclus2" is a two-stage cluster sample of schools within districts. 
+The sampling weights in apiclus1 are incorrect (the weight should be 757/15) but are as obtained from UCLA.
+
+# Assignment 4
+To use the "apipop" dataframe please run the following chunck. The dataframe for all parts is "apipop".
+
+```{r load data , warning = FALSE, message = FALSE}
+library(tidyverse)
+library(survey)
+data(api)
+
+```
+## Part a) 
+create a bar plot to show the number of schools in each school type (Elementary/Middle/High School) in California. 
+
+
+```{r a , warning = FALSE, message = FALSE}
+ggplot(apipop,aes(x=stype,fill=(stype)))+geom_bar()
+```
+
+
+## Part b) 
+create a bar plot to show the percentage of schools in each school type (Elementary/Middle/High School) in California. 
+
+
+```{r b , warning = FALSE, message = FALSE}
+temporary1 <- group_by(apipop, stype)
+temporary2 <- summarize(temporary1, N = n())
+apipop_new <- mutate(temporary2, freq = N / sum(N), pct = round((freq*100), 0))
+p <- ggplot(apipop_new, aes(x = stype, y = pct, fill=stype))
+p + geom_col(position = "dodge2") +
+labs(x = "Type of School",y = "Percent") +
+theme(legend.position = "top")
+```
+
+## Part c) 
+create a bar plot to show the number of schools that are "Eligible for awards program" or not in each school type (Elementary/Middle/High School).  
+
+
+```{r c , warning = FALSE, message = FALSE}
+ggplot(apipop,aes(x=stype,fill=(awards)))+geom_bar()
+```
+
+## Part d) 
+create a bar plot to show the percentage of schools that are "Eligible for awards program" or not in each school type (Elementary/Middle/High School).  
+
+```{r d , warning = FALSE, message = FALSE}
+temporary1 <- group_by(apipop, stype, awards)
+temporary2 <- summarize(temporary1, N = n())
+apipop_new <- mutate(temporary2, freq = N / sum(N), pct = round((freq*100), 0))
+p <- ggplot(apipop_new, aes(x = stype, y = pct, fill=awards))
+p + geom_col(position = "dodge2") +
+labs(x = "Type of School",y = "Percent") +
+theme(legend.position = "top")
+```
+
+## Part e) 
+use facet to create two histogram to show the distributions of the "number of students enrolled" in all school whether are "Eligible for awards program" or not (bins=30). 
+
+```{r e , warning = FALSE, message = FALSE}
+p <- ggplot(apipop, aes(x = stype, y = enroll, fill = awards))
+p + geom_col(position = "dodge") +
+labs(x = "School Type", y = "Number Of Students Enrolled", fill = "Eligible for Awards") +
+guides( fill = "none") + 
+facet_grid(~ awards)
+```
+
+
+

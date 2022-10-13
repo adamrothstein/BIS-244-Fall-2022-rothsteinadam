@@ -1,0 +1,97 @@
+---
+title: "HW3"
+output: html_document
+date: "2022-09-14"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## HW 3 - Working with **gapminder** Data
+
+In this assignment you will start playing around a little more with **gapminder** (This is the dataset we used to explain *ggplot* function). You can try each of these explorations with *geom_point()* and then with *geom_smooth()*, or both together. Please use **Healy_CH3.R**, as the base, to work around. 
+
+* a) What happens when you put the *geom_smooth()* function before *geom_point()* instead of after it in **Healy_CH3.R**? What does this tell you about how the plot is drawn? Think about how this might be useful when drawing plots.
+---When *geom_smooth()* is put in front of *geom_point()* , The smoothe curve falls behind the data points.
+
+```{r a}
+# place appropriate r syntaxes to draw part a
+
+library(tidyverse)
+library(gapminder)
+p <- ggplot(data = gapminder)
+p
+
+p <- ggplot(data = gapminder,
+            mapping = aes(x = gdpPercap,
+                          y = lifeExp))
+p + geom_smooth()
+
+p <- ggplot(data = gapminder,
+            mapping = aes(x = gdpPercap,
+                          y = lifeExp))
+p + geom_point() 
+p + geom_smooth() + geom_point()
+```
+
+* b) Change the mappings in the *aes()* function so that you plot **life expectancy** against **population (pop)** rather than per capita GDP. What does that look like? What does it tell you about the unit of observation in the dataset?
+---The data is somewhat misrepresented on this plot because the majority of the points are bunched up at the start of it, and only a handful are spread out accross the rest of the graph, skewing the results. 
+
+```{r b}
+# place appropriate r syntaxes to draw part b plot
+p <- ggplot(data = gapminder,
+            mapping = aes(x = pop,
+                          y = lifeExp,))
+p + geom_point() + geom_smooth()
+```
+
+* c) Try some alternative scale mappings. Besides *scale_x_log 10()*, you can try *scale_x_sqrt()*
+
+```{r c}
+# place appropriate r syntaxes to draw part c plot
+p <- ggplot(data = gapminder,
+            mapping = aes(x = gdpPercap,
+                          y = lifeExp))
+p + geom_point(color = "purple") +
+  geom_smooth(method = "loess") +
+  scale_x_sqrt()
+```
+
+* d) What happens if you map *color* to year instead of *continent*?
+---Instead of many different colors, there are just different shades of blue representing different decades. There is also just one line through the data instead of the five, each representing a continent. 
+```{r d}
+# place appropriate r syntaxes to draw part d plot
+p <- ggplot(data = gapminder,
+            mapping = aes(x = gdpPercap,
+                          y = lifeExp,
+                          color = year))
+p + geom_point() +
+  geom_smooth(method = "loess") +
+  scale_x_log10()
+
+gapminder
+```
+
+Is the result what you expected? Think about what class of object year is. Remember you can get a quick look at the top of the data, which includes some shorthand information on the class of each variable, by typing *gapminder.*
+---I wasn't sure what to expect since "year" is an integer and "continent" is a factor.
+
+* e) Instead of mapping *color = year* in part d, what happens if you try *color = factor(year)*?
+There is now a different color representing each year in the dataset, rather than different shades of blue representing different decades, which I believe visualizes the data more effectively. 
+
+```{r e}
+# place appropriate r syntaxes to draw part e plot
+p <- ggplot(data = gapminder,
+            mapping = aes(x = gdpPercap,
+                          y = lifeExp,
+                          color = year))
+p + geom_point() +
+  geom_smooth(method = "loess") +
+  scale_x_log10()
+
+p + geom_point(mapping = aes(color = factor(year))) +
+  scale_x_log10()    
+```
+
+
+
